@@ -14,19 +14,18 @@ publish: true
 > [!released]
 > Introduced in Tasks X.Y.Z.
 
-Obsidian Tasks can automatically perform act upon a task when it is marked 'done'.
+Obsidian Tasks can automatically perform an action upon a task when it is marked 'done'.
 
-This feature is enabled by adding (*after* the description in a task line):
+This feature is enabled by adding (*after* the description within a task):
 
 - the *checkered flag* signifier 🏁, followed by
 - a word that identifies the desired ***Action*** to take when the item is completed.
 
 The following "On Completion" actions are supported:
 
-1. **ListEnd** &nbsp;&nbsp;&nbsp;&nbsp;Move the task to **the end of the list** in which it appears
-2. **LogList** &nbsp;&nbsp;&nbsp;&nbsp;Move the task to a list of completed tasks **within the *current* note** &nbsp;&nbsp;(default list heading:  "# Completed Tasks")
-3. **LogNote** &nbsp;Move the task to **a separate, archival "completed tasks" note** &nbsp;&nbsp;(default filename:  "Completed Tasks.md")
-4. **Delete** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Delete the task**
+1. **ToLogList** &nbsp;&nbsp;&nbsp;&nbsp;Move the task to a list of completed tasks **within the *current* note** &nbsp;&nbsp;(default list heading:  "# Completed Tasks")
+2. **ToLogNote** &nbsp;Move the task to **a separate, archival "completed tasks" note** &nbsp;&nbsp;(default filename:  "Completed Tasks.md")
+3. **Delete** &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**Delete the task**
 
 ## Example "On Completion" operations
 
@@ -37,11 +36,11 @@ Imagine that your vault consists of a single note file "My Project" (`My Project
 
 ```text
 # My Project Tasks
-- [ ] Move me to end of current list 🏁 ListEnd
-- [ ] Move me to "# Completed Task Log" **list** within this note 🏁 LogList
-- [ ] Move me to the "Completed Tasks" **note** file 🏁 LogFile
-- [ ] Delete me 🏁 Delete
 - [ ] Leave me alone
+- [ ] Move me to "# Completed Task Log" **list** within this note 🏁 ToLogList
+- [ ] Move me to the "Completed Tasks" **note** file 🏁 ToLogFile
+- [ ] Delete me 🏁 Delete
+- [ ] Leave me alone too
 ```
 
 Using the plugin's default settings, after you *use Tasks* to mark the above tasks as "done", your vault will contain:
@@ -51,23 +50,23 @@ Your `My Project` note file:
 ```text
 # My Project Tasks
 - [x] Leave me alone
-- [x] Move me to end of current list 🏁 ListEnd
+- [x] Leave me alone too
 
 # Completed Tasks
-- [x] Move me to "# Completed Task Log" **list** within this note 🏁 LogList
+- [x] Move me to "# Completed Task Log" **list** within this note 🏁 ToLogList
 ```
 
 And a *new* `Completed Tasks` note file (`Completed Tasks.md`):
 
 ```text
 # Completed Tasks
-- [x] Move me to the "Completed Tasks" **note** file 🏁 LogFile
+- [x] Move me to the "Completed Tasks" **note** file 🏁 ToLogFile
 ```
 
 > [!note]
 > Since they didn't already exist, Tasks created
 >
-> - the in-note list with the "# Completed Tasks" heading, and
+> - the in-note list with the "# Completed Task Log" heading, and
 > - the "Completed Tasks" archive note
 >
 > as you marked Done those tasks that featured On Completion actions that required them.
