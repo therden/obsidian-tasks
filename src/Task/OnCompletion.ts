@@ -111,7 +111,11 @@ export function handleOnCompletion(
     // throw new Error('Something went wrong');
 }
 
-export function writeLineToListEnd(initialFileContent: string, targetListHeading: string, textToAppend: string) {
+export function writeLineToListEnd(
+    initialFileContent: string,
+    targetListHeading: string,
+    textToAppend: string | any[],
+) {
     if (textToAppend.length === 0) {
         return initialFileContent;
     }
@@ -119,19 +123,13 @@ export function writeLineToListEnd(initialFileContent: string, targetListHeading
         throw Error('Cannot move line to list as empty target list heading was supplied');
     }
     const NEWLINE = '\n';
-    const TASK_REGEX = new RegExp('^(> )*( *(- [.])).*');
+    const TASK_REGEX = new RegExp('^(> )*( *(- \\[.\\]))');
     const linesArray = initialFileContent.split('\n');
-    const headingLineNumber = linesArray.indexOf(targetListHeading);
-    let thisLine = '';
-    let insertionLine = headingLineNumber + 1;
-    for (thisLine in linesArray.slice(insertionLine)) {
-        if (thisLine.search(TASK_REGEX) > -1) {
-            insertionLine += 1;
-        } else break;
+    let insertionLine = linesArray.indexOf(targetListHeading) + 1;
+    for (const thisLine of linesArray.slice(insertionLine)) {
+        if (thisLine.search(TASK_REGEX) === -1) break;
+        insertionLine += 1;
     }
-    if (insertionLine > linesArray.length) {
-        insertionLine = -1;
-    }
-    linesArray[insertionLine] += NEWLINE + textToAppend;
+    linesArray[insertionLine - 1] += NEWLINE + textToAppend;
     return linesArray.join(NEWLINE);
 }
