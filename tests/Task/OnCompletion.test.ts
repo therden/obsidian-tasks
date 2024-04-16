@@ -310,7 +310,7 @@ describe('OnCompletion-ToLogFile', () => {
 });
 
 describe('OnCompletion-EndOfList', () => {
-    it('should insert line at end of list when list followed by blank line', () => {
+    it('should insert line at end of list when list is followed by a blank line', () => {
         const initialContentNoNewLine = `Sed ipsam libero qui consequuntur quaerat non atque quia ab praesentium explicabo.
 ## MY TASK LIST
 - [ ] An incomplete task
