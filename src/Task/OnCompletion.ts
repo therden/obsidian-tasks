@@ -1,7 +1,7 @@
 import { TFile } from 'obsidian';
 
 import { StatusType } from '../Statuses/StatusConfiguration';
-import { appendToEndOfFile, appendToListWithinFile } from '../lib/FileWriter';
+import { appendToEndOfFile } from '../lib/FileWriter';
 import type { Task } from './Task';
 
 function removeCalloutPrefixes(lineOfText: string) {
@@ -83,7 +83,8 @@ export function handleOnCompletion(
         //  move completed task to end of list with specified heading within note in which it originated
         const filePath = changedStatusTask.path;
         fileWriter(filePath, (data: string) => {
-            return appendToListWithinFile(data, '## Archived Tasks - Prepended', textToWrite);
+            // return appendToListWithinFile(data, '## Archived Tasks - Prepended', textToWrite);
+            return writeLineToListEnd(data, '## Archived Tasks - Prepended', textToWrite);
         });
         return returnWithoutCompletedInstance(tasks, changedStatusTask);
     }
@@ -118,7 +119,7 @@ export function writeLineToListEnd(initialFileContent: string, targetListHeading
         throw Error('Cannot move line to list as empty target list heading was supplied');
     }
     const NEWLINE = '\n';
-    const TASK_REGEX = new RegExp('^(> )*( *(- \\[.\\])).*');
+    const TASK_REGEX = new RegExp('^(> )*( *(- [.])).*');
     const linesArray = initialFileContent.split('\n');
     const headingLineNumber = linesArray.indexOf(targetListHeading);
     let thisLine = '';
