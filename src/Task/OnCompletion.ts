@@ -118,7 +118,7 @@ export function writeLineToListEnd(initialFileContent: string, targetListHeading
         throw Error('Cannot move line to list as empty target list heading was supplied');
     }
     const NEWLINE = '\n';
-    const TASK_REGEX = new RegExp('^( *(- [.])).*');
+    const TASK_REGEX = new RegExp('^(> )*( *(- \\[.\\])).*');
     const linesArray = initialFileContent.split('\n');
     const headingLineNumber = linesArray.indexOf(targetListHeading);
     let thisLine = '';
