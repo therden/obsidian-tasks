@@ -387,4 +387,18 @@ A line of regular text.`;
         const newFile = writeLineToListEnd(initialContentNoNewLine, targetListHeading, textToAppend);
         expect(newFile).toEqual(expectedContent);
     });
+
+    it('should recognize tasks in block quote as part of list', () => {
+        const initialContentNoNewLine = `> Sed ipsam libero qui consequuntur quaerat...
+> ## MY TASK LIST
+>    - [ ] An INDENTED incomplete task`;
+        const expectedContent = `> Sed ipsam libero qui consequuntur quaerat...
+> ## MY TASK LIST
+>    - [ ] An INDENTED incomplete task
+- [-] A COMPLETED TASK TO INSERT AT END OF NAMED LIST`;
+        const targetListHeading = '> ## MY TASK LIST';
+        const textToAppend = '- [-] A COMPLETED TASK TO INSERT AT END OF NAMED LIST';
+        const newFile = writeLineToListEnd(initialContentNoNewLine, targetListHeading, textToAppend);
+        expect(newFile).toEqual(expectedContent);
+    });
 });
