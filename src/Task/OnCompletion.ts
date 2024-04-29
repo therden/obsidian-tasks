@@ -40,6 +40,10 @@ export function updateFileContentEventually(filePath: string, fileContentUpdater
     updateFileContent(filePath, fileContentUpdater).then(() => {});
 }
 
+export function adjustLineForArchival(changedStatusTaskLine: string) {
+    return removeCalloutPrefixes(changedStatusTaskLine.trimStart());
+}
+
 export function handleOnCompletion(
     task: Task,
     tasks: Task[],
@@ -68,7 +72,8 @@ export function handleOnCompletion(
 
     // trim leading spaces and remove `> ` prefixes to prevent misinterpretation
     //    of completed task instances s moved to new contexts
-    const textToWrite: string = removeCalloutPrefixes(changedStatusTask.toFileLineString().trimStart());
+    const changedStatusTaskLine = changedStatusTask.toFileLineString();
+    const textToWrite: string = adjustLineForArchival(changedStatusTaskLine);
 
     if (taskString.includes('🏁 ToLogFile')) {
         //  append completed task to end of list under specified heading of separate, specified note file
@@ -122,7 +127,7 @@ export function writeLineToListEnd(
         throw Error('Cannot move line to list as empty target list heading was supplied');
     }
     const NEWLINE = '\n';
-    const TASK_REGEX = new RegExp('^(> )*( *(- \\[.\\]))');
+    const TASK_REGEX = new RegExp('^(> )*( *(- \\[.]))');
     const linesArray = initialFileContent.split('\n');
     let insertionLine = linesArray.indexOf(targetListHeading) + 1;
     for (const thisLine of linesArray.slice(insertionLine)) {
