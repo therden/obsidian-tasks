@@ -72,8 +72,7 @@ export function handleOnCompletion(
 
     if (taskString.includes('🏁 ToLogFile')) {
         //  append completed task to end of list under specified heading of separate, specified note file
-        const filePath = toLogFilePath;
-        fileWriter(filePath, (data: string) => {
+        fileWriter(toLogFilePath, (data: string) => {
             return appendToEndOfFile(data, textToWrite);
         });
         return returnWithoutCompletedInstance(tasks, changedStatusTask);
