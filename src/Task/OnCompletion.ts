@@ -84,7 +84,7 @@ export function handleOnCompletion(
         const filePath = changedStatusTask.path;
         fileWriter(filePath, (data: string) => {
             // return appendToListWithinFile(data, '## Archived Tasks - Prepended', textToWrite);
-            return writeLineToListEnd(data, '## Archived Tasks - Prepended', textToWrite);
+            return writeLineToListEnd(data, '## Archived Tasks - Appended', textToWrite);
         });
         return returnWithoutCompletedInstance(tasks, changedStatusTask);
     }
