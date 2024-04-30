@@ -40,8 +40,9 @@ export function removeBlockQuoteCalloutPrefixes(lineOfText: string) {
     return lineOfText;
 }
 
-export function adjustLineForArchival(changedStatusTaskLine: string) {
-    return removeBlockQuoteCalloutPrefixes(changedStatusTaskLine.trimStart());
+export function prepareTaskLineForArchiving(changedStatusTaskLine: string) {
+    // changedStatusTaskLine = changedStatusTaskLine.trimStart();
+    return removeBlockQuoteCalloutPrefixes(changedStatusTaskLine);
 }
 
 export function handleOnCompletion(
@@ -73,7 +74,7 @@ export function handleOnCompletion(
     // trim leading spaces and remove `> ` prefixes to prevent misinterpretation
     //    of completed task instances s moved to new contexts
     const changedStatusTaskLine = changedStatusTask.toFileLineString();
-    const textToWrite: string = adjustLineForArchival(changedStatusTaskLine);
+    const textToWrite: string = prepareTaskLineForArchiving(changedStatusTaskLine);
 
     if (taskString.includes('🏁 ToLogFile')) {
         //  append completed task to end of list under specified heading of separate, specified note file

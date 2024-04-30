@@ -11,7 +11,7 @@ import { fromLine, toLines, toMarkdown } from '../TestingTools/TestHelpers';
 import type { Task } from '../../src/Task/Task';
 import { handleOnCompletion } from '../../src/Task/OnCompletion';
 import { writeLineToListEnd } from '../../src/Task/OnCompletion';
-import { removeBlockQuoteCalloutPrefixes } from '../../src/Task/OnCompletion';
+import { prepareTaskLineForArchiving, removeBlockQuoteCalloutPrefixes } from '../../src/Task/OnCompletion';
 
 window.moment = moment;
 
@@ -450,4 +450,25 @@ describe('OnCompletion-helper-removeBlockQuote|Calloutprefixes', () => {
         const expectedContent = '- [ ] An INDENTED incomplete task';
         expect(expectedContent).toEqual(removeBlockQuoteCalloutPrefixes(initialContent));
     });
+});
+
+describe('OnCompletion-helper-prepareTaskLineForArchiving', () => {
+    it('should remove single space indent from a string', () => {
+        const initialContent = ' - [ ] An INDENTED incomplete task';
+        const expectedContent = '- [ ] An INDENTED incomplete task';
+        expect(expectedContent).toEqual(prepareTaskLineForArchiving(initialContent));
+    });
+
+    it('should remove double space indent from a string', () => {
+        const initialContent = '  - [ ] An INDENTED incomplete task';
+        const expectedContent = '- [ ] An INDENTED incomplete task';
+        expect(expectedContent).toEqual(prepareTaskLineForArchiving(initialContent));
+    });
+
+    it('should remove indent from a string within a block quote|callout', () => {
+        const initialContent = '> >    - [ ] An INDENTED incomplete task';
+        const expectedContent = '- [ ] An INDENTED incomplete task';
+        expect(expectedContent).toEqual(prepareTaskLineForArchiving(initialContent));
+    });
+    prepareTaskLineForArchiving;
 });
