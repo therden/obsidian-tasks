@@ -247,8 +247,19 @@ ${toMarkdown(step2)}
     });
 });
 
-describe('OnCompletion-Delete', () => {
-    it('should return an empty Array for a non-recurring task with Delete Action', () => {
+describe('OnCompletion-test Delete action', () => {
+    it('should return an empty Array for a simple, undated task', () => {
+        // Arrange
+        const task = new TaskBuilder().description('A non-recurring task with 🏁 Delete').build();
+
+        // Act
+        const tasks = applyStatusAndOnCompletionAction(task, Status.makeDone());
+
+        // Assert
+        expect(tasks.length).toEqual(0);
+    });
+
+    it('should return an empty Array for a dated non-recurring task', () => {
         // Arrange
         const dueDate = '2024-02-10';
         const task = new TaskBuilder().description('A non-recurring task with 🏁 Delete').dueDate(dueDate).build();
@@ -261,7 +272,7 @@ describe('OnCompletion-Delete', () => {
         expect(tasks).toEqual([]);
     });
 
-    it('should return only the next instance of a recurring task with Delete action', () => {
+    it('should return only the next instance of a recurring task', () => {
         // Arrange
         const dueDate = '2024-02-10';
         const recurrence = new RecurrenceBuilder().rule('every day').dueDate(dueDate).build();
@@ -281,10 +292,12 @@ describe('OnCompletion-Delete', () => {
             '"- [ ] A recurring task with 🏁 Delete 🔁 every day 📅 2024-02-11"',
         );
     });
+});
 
-    it('should delete a simple task with flag on completion', () => {
+describe('OnCompletion-test ToLogFile action', () => {
+    it('should return an empty Array for a simple, undated task', () => {
         // Arrange
-        const task = new TaskBuilder().description('A non-recurring task with 🏁 Delete').build();
+        const task = new TaskBuilder().description('A non-recurring task with 🏁 ToLogFile').build();
 
         // Act
         const tasks = applyStatusAndOnCompletionAction(task, Status.makeDone());
@@ -292,10 +305,8 @@ describe('OnCompletion-Delete', () => {
         // Assert
         expect(tasks.length).toEqual(0);
     });
-});
 
-describe('OnCompletion-ToLogFile', () => {
-    it('should write completed instance of non-recurring task to empty log file', () => {
+    it('should return an empty Array for a dated, non-recurring task', () => {
         // Arrange
         const dueDate = '2024-02-10';
         const task = new TaskBuilder().description('A non-recurring task with 🏁 ToLogFile').dueDate(dueDate).build();
@@ -307,9 +318,30 @@ describe('OnCompletion-ToLogFile', () => {
         // Assert
         expect(tasks).toEqual([]);
     });
+
+    it('should return only the next instance of a recurring task', () => {
+        // Arrange
+        const dueDate = '2024-02-10';
+        const recurrence = new RecurrenceBuilder().rule('every day').dueDate(dueDate).build();
+        const task = new TaskBuilder()
+            .description('A recurring task with 🏁 ToLogFile')
+            .recurrence(recurrence)
+            .dueDate(dueDate)
+            .build();
+        expect(task.status.type).toEqual(StatusType.TODO);
+
+        // Act
+        const tasks = applyStatusAndOnCompletionAction(task, Status.makeDone());
+
+        // Assert
+        expect(tasks.length).toEqual(1);
+        expect(toLines(tasks).join('\n')).toMatchInlineSnapshot(
+            '"- [ ] A recurring task with 🏁 ToLogFile 🔁 every day 📅 2024-02-11"',
+        );
+    });
 });
 
-describe('OnCompletion-EndOfList', () => {
+describe('OnCompletion-test EndOfList action', () => {
     it('should insert line at end of list when list is followed by a blank line', () => {
         const initialContentNoNewLine = `Sed ipsam libero qui consequuntur quaerat non atque quia ab praesentium explicabo.
 ## MY TASK LIST
