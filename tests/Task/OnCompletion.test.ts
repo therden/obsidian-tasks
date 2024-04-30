@@ -220,6 +220,16 @@ describe('OnCompletion - visualise behaviour', () => {
                 nextStatus: new Status(new StatusConfiguration('X', 'new status', ' ', false, StatusType.DONE)),
                 line: '- [x] An already-DONE task, changing to Different DONE status 🏁 Delete 📅 2024-02-10 ✅ 2024-02-10',
             },
+
+            // Alternate initial task line characters
+            {
+                nextStatus: Status.makeDone(),
+                line: '* [ ] Asterisk recurring task with 🏁 Delete 🔁 every day 📅 2024-04-29',
+            },
+            {
+                nextStatus: Status.makeDone(),
+                line: '+ [ ] Plus sign recurring task with 🏁 Delete 🔁 every day 📅 2024-04-30',
+            },
         ];
     }
 
