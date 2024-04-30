@@ -4,13 +4,6 @@ import { StatusType } from '../Statuses/StatusConfiguration';
 import { appendToEndOfFile } from '../lib/FileWriter';
 import type { Task } from './Task';
 
-function removeCalloutPrefixes(lineOfText: string) {
-    while (lineOfText.substring(0, 2) === '> ') {
-        lineOfText = lineOfText.substring(2);
-    }
-    return lineOfText;
-}
-
 function returnWithoutCompletedInstance(tasks: Task[], changedStatusTask: Task) {
     return tasks.filter((task) => task !== changedStatusTask);
 }
@@ -40,8 +33,15 @@ export function updateFileContentEventually(filePath: string, fileContentUpdater
     updateFileContent(filePath, fileContentUpdater).then(() => {});
 }
 
+export function removeBlockQuoteCalloutPrefixes(lineOfText: string) {
+    // while (lineOfText.substring(0, 2) === '> ') {
+    //     lineOfText = lineOfText.substring(2);
+    // }
+    return lineOfText;
+}
+
 export function adjustLineForArchival(changedStatusTaskLine: string) {
-    return removeCalloutPrefixes(changedStatusTaskLine.trimStart());
+    return removeBlockQuoteCalloutPrefixes(changedStatusTaskLine.trimStart());
 }
 
 export function handleOnCompletion(

@@ -11,6 +11,7 @@ import { fromLine, toLines, toMarkdown } from '../TestingTools/TestHelpers';
 import type { Task } from '../../src/Task/Task';
 import { handleOnCompletion } from '../../src/Task/OnCompletion';
 import { writeLineToListEnd } from '../../src/Task/OnCompletion';
+import { removeBlockQuoteCalloutPrefixes } from '../../src/Task/OnCompletion';
 
 window.moment = moment;
 
@@ -434,5 +435,19 @@ A line of regular text.`;
         const textToAppend = '- [-] A COMPLETED TASK TO INSERT AT END OF NAMED LIST';
         const newFile = writeLineToListEnd(initialContentNoNewLine, targetListHeading, textToAppend);
         expect(newFile).toEqual(expectedContent);
+    });
+});
+
+describe('OnCompletion-helper-removeBlockQuote|Calloutprefixes', () => {
+    it('should remove single "> " prefix from a string', () => {
+        const initialContent = '> - [ ] An INDENTED incomplete task';
+        const expectedContent = '- [ ] An INDENTED incomplete task';
+        expect(expectedContent).toEqual(removeBlockQuoteCalloutPrefixes(initialContent));
+    });
+
+    it('should remove multiple "> " prefixes from a string', () => {
+        const initialContent = '> > - [ ] An INDENTED incomplete task';
+        const expectedContent = '- [ ] An INDENTED incomplete task';
+        expect(expectedContent).toEqual(removeBlockQuoteCalloutPrefixes(initialContent));
     });
 });
