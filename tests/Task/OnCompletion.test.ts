@@ -32,7 +32,7 @@ export function applyStatusAndOnCompletionAction(task: Task, newStatus: Status) 
     return handleOnCompletion(task, tasks, 'archive.md', testFileWriter);
 }
 
-describe('OnCompletion', () => {
+describe('OnCompletion - tasks to return without taking any action', () => {
     it('should just return task if Action is not recognized', () => {
         // Arrange
         const dueDate = '2024-02-10';
@@ -156,77 +156,78 @@ describe('OnCompletion', () => {
     });
 });
 
-type ToggleCase = {
-    // inputs:
-    nextStatus: Status;
-    line: string;
-};
+describe('OnCompletion - visualise behaviour', () => {
+    type ToggleCase = {
+        // inputs:
+        nextStatus: Status;
+        line: string;
+    };
 
-function getCases(): ToggleCase[] {
-    return [
-        // Non-recurring
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A non-recurring task with no trigger 📅 2024-02-10',
-        },
+    function getCases(): ToggleCase[] {
+        return [
+            // Non-recurring
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A non-recurring task with no trigger 📅 2024-02-10',
+            },
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A non-recurring task with 🏁 Delete',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A non-recurring task with 🏁 Delete',
+            },
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A non-recurring task with 🏁 Delete 📅 2024-02-10',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A non-recurring task with 🏁 Delete 📅 2024-02-10',
+            },
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A non-recurring task with invalid OC trigger 🏁 INVALID_ACTION 📅 2024-02-10',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A non-recurring task with invalid OC trigger 🏁 INVALID_ACTION 📅 2024-02-10',
+            },
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A non-recurring task with 🏁',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A non-recurring task with 🏁',
+            },
 
-        // Recurring
+            // Recurring
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A recurring task with no trigger 🔁 every day 📅 2024-02-10',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A recurring task with no trigger 🔁 every day 📅 2024-02-10',
+            },
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [ ] A recurring task with 🏁 Delete 🔁 every day 📅 2024-02-10',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [ ] A recurring task with 🏁 Delete 🔁 every day 📅 2024-02-10',
+            },
 
-        {
-            nextStatus: Status.makeInProgress(),
-            line: '- [ ] A recurring task with 🏁 Delete 🔁 every day 📅 2024-02-10',
-        },
+            {
+                nextStatus: Status.makeInProgress(),
+                line: '- [ ] A recurring task with 🏁 Delete 🔁 every day 📅 2024-02-10',
+            },
 
-        // Other
+            // Other
 
-        {
-            nextStatus: Status.makeDone(),
-            line: '- [x] An already-DONE task, changing to Same      DONE status 🏁 Delete 📅 2024-02-10 ✅ 2024-02-10',
-        },
+            {
+                nextStatus: Status.makeDone(),
+                line: '- [x] An already-DONE task, changing to Same      DONE status 🏁 Delete 📅 2024-02-10 ✅ 2024-02-10',
+            },
 
-        {
-            nextStatus: new Status(new StatusConfiguration('X', 'new status', ' ', false, StatusType.DONE)),
-            line: '- [x] An already-DONE task, changing to Different DONE status 🏁 Delete 📅 2024-02-10 ✅ 2024-02-10',
-        },
-    ];
-}
+            {
+                nextStatus: new Status(new StatusConfiguration('X', 'new status', ' ', false, StatusType.DONE)),
+                line: '- [x] An already-DONE task, changing to Different DONE status 🏁 Delete 📅 2024-02-10 ✅ 2024-02-10',
+            },
+        ];
+    }
 
-function action(toggleCase: ToggleCase): string {
-    const newStatus = toggleCase.nextStatus;
-    const task = fromLine({ line: toggleCase.line, path: 'anything.md', precedingHeader: 'heading' });
-    const step1 = task.handleNewStatus(newStatus);
-    const step2 = applyStatusAndOnCompletionAction(task, newStatus);
-    return `
+    function action(toggleCase: ToggleCase): string {
+        const newStatus = toggleCase.nextStatus;
+        const task = fromLine({ line: toggleCase.line, path: 'anything.md', precedingHeader: 'heading' });
+        const step1 = task.handleNewStatus(newStatus);
+        const step2 = applyStatusAndOnCompletionAction(task, newStatus);
+        return `
 initial task:
 ${task.toFileLineString()}
 
@@ -237,10 +238,9 @@ ${toMarkdown(step1)}
 ${toMarkdown(step2)}
 ----------------------------------------------
 `;
-}
+    }
 
-describe('visualise completion-behaviour', () => {
-    it('visualise', () => {
+    it('verify test cases', () => {
         // List of status and task
         const cases = getCases();
         verifyAll('checking on completion', cases, (toggleCase) => action(toggleCase));
