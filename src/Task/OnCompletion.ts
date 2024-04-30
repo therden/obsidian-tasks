@@ -34,9 +34,9 @@ export function updateFileContentEventually(filePath: string, fileContentUpdater
 }
 
 export function removeBlockQuoteCalloutPrefixes(lineOfText: string) {
-    // while (lineOfText.substring(0, 2) === '> ') {
-    //     lineOfText = lineOfText.substring(2);
-    // }
+    while (lineOfText.substring(0, 2) === '> ') {
+        lineOfText = lineOfText.substring(2);
+    }
     return lineOfText;
 }
 
