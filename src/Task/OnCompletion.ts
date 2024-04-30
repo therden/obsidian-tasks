@@ -41,8 +41,7 @@ export function removeBlockQuoteCalloutPrefixes(lineOfText: string) {
 }
 
 export function prepareTaskLineForArchiving(changedStatusTaskLine: string) {
-    // changedStatusTaskLine = changedStatusTaskLine.trimStart();
-    return removeBlockQuoteCalloutPrefixes(changedStatusTaskLine);
+    return removeBlockQuoteCalloutPrefixes(changedStatusTaskLine).trimStart();
 }
 
 export function handleOnCompletion(
