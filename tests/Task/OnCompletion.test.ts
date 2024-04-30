@@ -111,7 +111,7 @@ describe('OnCompletion', () => {
         `);
     });
 
-    it('should return the task when going from TODO to IN_PROGRESS', () => {
+    it('should just return the task when going from TODO to IN_PROGRESS', () => {
         // Arrange
         const dueDate = '2024-02-10';
         const recurrence = new RecurrenceBuilder().rule('every day').dueDate(dueDate).build();
@@ -129,7 +129,7 @@ describe('OnCompletion', () => {
         expect(tasks[0].status.type).toEqual(StatusType.IN_PROGRESS);
     });
 
-    it('should return the task when going from one DONE status to another DONE status', () => {
+    it('should just return the task when going from one DONE status to another DONE status', () => {
         // Arrange
         const done1 = new Status(new StatusConfiguration('x', 'done', ' ', true, StatusType.DONE));
         const done2 = new Status(new StatusConfiguration('X', 'DONE', ' ', true, StatusType.DONE));
@@ -144,7 +144,7 @@ describe('OnCompletion', () => {
         expect(tasks[0].status.type).toEqual(StatusType.DONE);
     });
 
-    it('should return a task featuring the On Completion flag trigger but an empty string Action', () => {
+    it('should just return the task when it contains the On Completion flag trigger but an empty string Action', () => {
         // Arrange
         const task = new TaskBuilder().description('A non-recurring task with 🏁').build();
 
@@ -248,7 +248,6 @@ describe('visualise completion-behaviour', () => {
 });
 
 describe('OnCompletion-Delete', () => {
-    // TODO is there a better way to handle the following?  does an 'empty' Task exist?
     it('should return an empty Array for a non-recurring task with Delete Action', () => {
         // Arrange
         const dueDate = '2024-02-10';
@@ -282,6 +281,7 @@ describe('OnCompletion-Delete', () => {
             '"- [ ] A recurring task with 🏁 Delete 🔁 every day 📅 2024-02-11"',
         );
     });
+
     it('should delete a simple task with flag on completion', () => {
         // Arrange
         const task = new TaskBuilder().description('A non-recurring task with 🏁 Delete').build();
