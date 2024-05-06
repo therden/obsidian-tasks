@@ -316,18 +316,73 @@ describe('OnCompletion-test ToLogFile action', () => {
         // Assert
         expect(tasks.length).toEqual(0);
     });
+});
 
-    it('should return an empty Array for a dated, non-recurring task', () => {
+export function applyStatusAndOnCompletionAction2(
+    task: Task,
+    newStatus: Status,
+    fileWriter: (filePath: string, fileContentUpdater: (data: string) => string) => void,
+) {
+    const tasks = task.handleNewStatus(newStatus);
+    return handleOnCompletion(task, tasks, 'archive.md', fileWriter);
+}
+
+function setupTestAndCaptureData(line: string, newStatus: Status, simulatedData: string) {
+    const task = fromLine({ line: line });
+    let capturedUpdatedData; // Variable to capture the updated data
+
+    // Create a Jest spy for the file writer
+    const mockFileWriter = jest.fn((_filePath: string, fileContentUpdater: (data: string) => string) => {
+        capturedUpdatedData = fileContentUpdater(simulatedData); // Execute updater function and capture the result
+    });
+
+    // Act
+    const tasks = applyStatusAndOnCompletionAction2(task, newStatus, mockFileWriter);
+    return { capturedUpdatedData, tasks };
+}
+
+describe('OnCompletion-ToLogFile', () => {
+    it('should write completed instance of non-recurring task to empty log file', () => {
         // Arrange
-        const dueDate = '2024-02-10';
-        const task = new TaskBuilder().description('A non-recurring task with 🏁 ToLogFile').dueDate(dueDate).build();
-        expect(task.status.type).toEqual(StatusType.TODO);
+        const line = '- [ ] A non-recurring task with 🏁 ToLogFile 📅 2024-02-10';
+        const simulatedData = ''; // Example initial data
 
         // Act
-        const tasks = applyStatusAndOnCompletionAction(task, Status.makeDone());
+        const { capturedUpdatedData, tasks } = setupTestAndCaptureData(line, Status.makeDone(), simulatedData);
 
         // Assert
         expect(tasks).toEqual([]);
+        expect(capturedUpdatedData).toBe(`- [x] A non-recurring task with 🏁 ToLogFile 📅 2024-02-10 ✅ 2024-02-11
+`);
+    });
+
+    it('should not update any file if task is not completed', () => {
+        // Arrange
+        const line = '- [x] A task that was DONE 🏁 ToLogFile';
+        const simulatedData = ''; // Example initial data
+
+        // Act
+        const { capturedUpdatedData, tasks } = setupTestAndCaptureData(line, Status.makeTodo(), simulatedData);
+
+        // Assert
+        expect(toMarkdown(tasks)).toEqual('- [ ] A task that was DONE 🏁 ToLogFile');
+        // Because the updated task is not DONE, no file output should have been written:
+        expect(capturedUpdatedData).toBeUndefined();
+    });
+
+    it('should append a recurring task to end of an existing file', () => {
+        // Arrange
+        const line = '- [ ] Recurring task 🏁 ToLogFile 🔁 every day 📅 2024-02-11';
+        const simulatedData = '# Existing heading - without end-of-line';
+
+        // Act
+        const { capturedUpdatedData, tasks } = setupTestAndCaptureData(line, Status.makeDone(), simulatedData);
+
+        // Assert
+        expect(toMarkdown(tasks)).toEqual('- [ ] Recurring task 🏁 ToLogFile 🔁 every day 📅 2024-02-12');
+        expect(capturedUpdatedData).toBe(`# Existing heading - without end-of-line
+- [x] Recurring task 🏁 ToLogFile 🔁 every day 📅 2024-02-11 ✅ 2024-02-11
+`);
     });
 
     it('should return only the next instance of a recurring task', () => {
